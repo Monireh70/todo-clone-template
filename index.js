@@ -1,12 +1,17 @@
 let taskIDCounter = 0;
 const taskList = [];
-
+let i = 0;
 const todoListElement = document.querySelector("#todo-list");
+const createTaskForm = document.querySelector("#createtoDo");
+const createTaskInput = createTaskForm.querySelector("input");
+const createTaskButton = createTaskForm.querySelector("button");
+const msg=document.querySelector("#msg")
 
 const TASK_STATUS = Object.freeze({
   todo: "todo",
   done: "done",
 });
+
 
 function taskFactory(text = "", status = TASK_STATUS.todo) {
   if (typeof text !== "string") {
@@ -24,73 +29,59 @@ function taskFactory(text = "", status = TASK_STATUS.todo) {
   };
 
   taskIDCounter++;
+  
 
   return taskObject;
-                                                                 }
+}
 
 function renderTask(taskObject) {
-  if (!taskObject || typeof taskObject !== "object") {
-    return;
-  }
-  //select template from DOM
+
   const template=document.querySelector("template");
-  //clone all contents of template in cln
   let cln=template.content.cloneNode(true);
-  //fill p tag with taskObject.text
-  cln.querySelector("p").innerHTML=taskObject.text;
-  //append li to ul
+  console.log(cln);
+   cln.querySelector("p").innerHTML=taskObject.text;
    todoListElement.appendChild(cln);
+   
+  
 
 }
 
-
-
-
-function renderTasks() {
-  
-  todoListElement.innerHTML="";
-  
-  for (let i = 0; i < taskList.length; i += 1) {
-
-    let renderedTask = renderTask(taskList[i]);
-    todoListElement.appendChild(renderedTask);
-    
-                          }
-  
-                      }
 
 function createTask(text = "") {
-  
   const task = taskFactory(text);
   taskList.push(task);
-    renderTasks();
-  
- 
+
+  //
+  renderTask(task);
 }
-
-const createTaskForm = document.querySelector("#createtoDo");
-
-const createTaskInput = createTaskForm.querySelector("input");
-const createTaskButton = createTaskForm.querySelector("button");
 
 function createTaskHandler() {
   const value = createTaskInput.value;
-  if (!value) {
-    return;
-  }
-  createTask(value);
+  
+  validation();
   createTaskInput.value = "";
+  
 }
+function validation() {
+  if (createTaskInput.value === "") {
+    msg.innerHTML = " task can  not be blank!";
+    
+  }
+  else if (createTaskInput.value != ""){
+    msg.innerHTML = "";
+    createTask(createTaskInput.value)
+
+  }
+};
 
 createTaskButton.addEventListener("click", createTaskHandler);
-createTaskForm.addEventListener("keypress", function(event) {
+
+createTaskForm.addEventListener("keypress", function (event) {
   // If the user presses the "Enter" key on the keyboard
   if (event.key === "Enter") {
     // Cancel the default action, if needed
     createTaskHandler();
     event.preventDefault();
     // Trigger the button element with a click
-    
-                               }
+  }
 });
-
